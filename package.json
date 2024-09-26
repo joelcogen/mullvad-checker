@@ -1,0 +1,27 @@
+{
+  "name": "mullvad-checker",
+  "productName": "Mullvad Checker",
+  "version": "1.0.0",
+  "description": "Mullvad Checker",
+  "author": "Joel Cogen",
+  "main": "main.js",
+  "license": "ISC",
+  "keywords": [],
+  "scripts": {
+    "start": "webpack && electron .",
+    "build": "webpack && electron-packager . --overwrite --icon=./icon.icns"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.3",
+    "@babel/preset-env": "^7.24.3",
+    "@babel/preset-react": "^7.24.1",
+    "babel-loader": "^9.1.3",
+    "electron": "^29.1.6",
+    "electron-packager": "^17.1.2",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "javascript-time-ago": "^2.5.11"
+  }
+}
