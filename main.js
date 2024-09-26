@@ -139,7 +139,7 @@ const updateTrayStatus = (iconName, statusText) => {
         { label: statusText, type: "normal", enabled: false },
         accountExpiration
           ? {
-              label: `Expires in ${timeAgo.format(accountExpiration)}`,
+              label: `Expires ${timeAgo.format(accountExpiration)}`,
               type: "normal",
               enabled: false,
             }
