@@ -1,4 +1,4 @@
-const { app, Tray, Menu, nativeImage, navigator } = require("electron");
+const { app, Tray, Menu, nativeImage } = require("electron");
 const path = require("path");
 const TimeAgo = require("javascript-time-ago");
 const en = require("javascript-time-ago/locale/en");
@@ -22,17 +22,6 @@ let tray,
 let loading = true;
 let isStartup = app.getLoginItemSettings().openAtLogin;
 
-exec(
-  "mullvad account get | sed -n 2p | awk '{print $3}'",
-  (error, stdout, stderr) => {
-    try {
-      accountExpiration = new Date(stdout);
-    } catch {
-      // no-op
-    }
-  }
-);
-
 app.whenReady().then(() => {
   const icon = nativeImage.createFromPath(path.join(__dirname, "loading.png"));
   tray = new Tray(icon);
@@ -40,6 +29,7 @@ app.whenReady().then(() => {
 
   setInterval(setMenu, 1_000);
   check();
+  findExpiration();
 });
 
 const check = async () => {
@@ -75,6 +65,22 @@ const check = async () => {
     loading = false;
     timeout = setTimeout(check, DELAY);
   }
+};
+
+const findExpiration = () => {
+  exec(
+    "/usr/local/bin/mullvad account get | sed -n 2p | awk '{print $3}'",
+    (error, stdout, stderr) => {
+      try {
+        accountExpiration = new Date(stdout);
+        timeAgo.format(accountExpiration);
+      } catch {
+        accountExpiration = null;
+      } finally {
+        setTimeout(findExpiration, 86_400_000);
+      }
+    }
+  );
 };
 
 const myFetch = (url) => {
