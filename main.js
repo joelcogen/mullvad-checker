@@ -6,7 +6,7 @@ TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo("en-US");
 
 const DELAY = 60_000;
-const TIMEOUT = 10_000;
+const TIMEOUT = 30_000;
 
 app.dock.hide();
 
