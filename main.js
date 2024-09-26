@@ -4,15 +4,34 @@ const TimeAgo = require("javascript-time-ago");
 const en = require("javascript-time-ago/locale/en");
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo("en-US");
+const { exec } = require("child_process");
 
 const DELAY = 60_000;
 const TIMEOUT = 30_000;
 
 app.dock.hide();
 
-let tray, config, connected, location, dnsLeak, lastCheck, timeout;
+let tray,
+  config,
+  connected,
+  location,
+  dnsLeak,
+  lastCheck,
+  timeout,
+  accountExpiration;
 let loading = true;
 let isStartup = app.getLoginItemSettings().openAtLogin;
+
+exec(
+  "mullvad account get | sed -n 2p | awk '{print $3}'",
+  (error, stdout, stderr) => {
+    try {
+      accountExpiration = new Date(stdout);
+    } catch {
+      // no-op
+    }
+  }
+);
 
 app.whenReady().then(() => {
   const icon = nativeImage.createFromPath(path.join(__dirname, "loading.png"));
@@ -112,6 +131,14 @@ const updateTrayStatus = (iconName, statusText) => {
     Menu.buildFromTemplate(
       [
         { label: statusText, type: "normal", enabled: false },
+        accountExpiration
+          ? {
+              label: `Expires in ${timeAgo.format(accountExpiration)}`,
+              type: "normal",
+              enabled: false,
+            }
+          : null,
+        { type: "separator" },
         {
           label: loading
             ? "Checking..."
@@ -119,7 +146,6 @@ const updateTrayStatus = (iconName, statusText) => {
           type: "normal",
           enabled: false,
         },
-        { type: "separator" },
         {
           label: "Check now",
           click: () => check(),
