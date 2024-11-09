@@ -1,3 +1,4 @@
 /node_modules
 /Mullvad\ Checker-darwin-arm64
 /dist
+.DS_Store
